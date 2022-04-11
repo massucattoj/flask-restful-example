@@ -14,6 +14,8 @@ from security import authenticate, identity
 ''' We dont need to use jsonify with restful api, that happens automatically '''
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # tell where is the database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # specify configuration property
 app.secret_key = 'bumblebee'
@@ -38,5 +40,12 @@ api.add_resource(ItemList, '/items')
 api.add_resource(StoreList, '/stores')
 
 if __name__ == '__main__':
+    from db import db
     db.init_app(app)
-    app.run(port=5000, debug=True)
+
+    if app.config['DEBUG']:
+        @app.before_first_request
+        def create_tables():
+            db.create_all()
+
+    app.run(port=5000)
