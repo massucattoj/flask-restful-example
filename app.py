@@ -1,5 +1,4 @@
 import os
-import re
 from datetime import timedelta
 
 from flask import Flask
@@ -18,13 +17,7 @@ from security import authenticate, identity
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-uri = os.getenv("DATABASE_URL")  # or other relevant config var
-if uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://", 1)
-# rest of connection code using the connection string `uri`
-
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(uri, 'sqlite:///data.db') # tell where is the database
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URI", 'sqlite:///data.db') # tell where is the database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # specify configuration property
 app.secret_key = 'bumblebee'
 api = Api(app)
